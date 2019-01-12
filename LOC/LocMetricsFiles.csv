@@ -1,0 +1,7 @@
+File,LOC,SLOC-P,SLOC-L,MVG,BLOC,C&SLOC,CLOC,CWORD,HCLOC,HCWORD
+D:\C\DOD_PONG\src\game.c,139,94,83,2,33,0,12,20,0,0
+D:\C\DOD_PONG\src\main.c,89,59,46,6,28,9,2,37,0,0
+D:\C\DOD_PONG\src\matrix.c,88,70,61,8,17,0,1,2,0,0
+D:\C\DOD_PONG\src\opengl_impl.c,105,68,64,3,18,0,19,34,0,0
+D:\C\DOD_PONG\src\shader.c,90,60,54,4,26,0,4,9,0,0
+D:\C\DOD_PONG\src\string.c,39,34,31,5,5,0,0,0,0,0

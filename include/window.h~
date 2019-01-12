@@ -1,0 +1,176 @@
+#include <windows.h>
+
+typedef struct {
+  int width;
+  int height;
+  int quit;
+  LPCSTR class_name;
+  HINSTANCE h_instance;
+  HWND hwnd;
+  HDC device_context;
+  HGLRC gl_context;
+} Window;
+
+void PrintErrorString() {
+  DWORD error = GetLastError();
+  char error_str[256];
+  FormatMessage(
+		FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL,
+		error,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT),
+		error_str,
+		256,
+		NULL
+		);
+
+  printf("Error: %s\n", error_str);
+};
+
+LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  if(msg != 36 && msg != 129 && msg != 131 && msg != 1) {
+    Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+    switch (msg) {
+    case WM_CLOSE:
+    case WM_DESTROY:
+      window->quit = 1;
+      return 0;
+    }
+  }
+  return DefWindowProc(hwnd, msg, wParam, lParam);
+};
+
+int create_window(Window* window, int width, int height, char* title) {
+
+  HINSTANCE h_instance = GetModuleHandle(NULL);
+
+  window->width = width;
+  window->height = height;
+  window->quit = 0;
+  window->h_instance = h_instance;
+  window->class_name = "PongClassName";
+
+  WNDCLASS wnd = { 0 };
+  wnd.style = CS_VREDRAW | CS_HREDRAW | CS_OWNDC;
+  wnd.lpfnWndProc = window_proc;
+  wnd.cbClsExtra = 0;
+  wnd.cbWndExtra = 0;
+  wnd.hInstance = h_instance;
+  wnd.hIcon = NULL;
+  wnd.hCursor = NULL;
+  wnd.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
+  wnd.lpszMenuName = NULL;
+  wnd.lpszClassName = window->class_name;
+
+  if(RegisterClass(&wnd) == 0) {
+    printf("Failed to register class for window!\n");
+    return 1;
+  }
+
+  HWND hwnd = CreateWindowEx(
+			     WS_EX_OVERLAPPEDWINDOW, // dwExStyle
+			     window->class_name,     // lpClassName
+			     title,                  // lpWindowName
+			     WS_OVERLAPPEDWINDOW,    // dwStyle
+			     0, 0, width, height,    // x, y, w, h
+			     NULL,                   // hwndParent
+			     NULL,                   // hMenu
+			     h_instance,             // hInstance
+			     NULL                    // lpParam
+			     
+			     );
+
+  if(hwnd == NULL) {
+    printf("Failed to create window!\n");
+    return 2;
+  }
+
+  window->hwnd = hwnd;
+
+  SetWindowLongPtr( hwnd, GWLP_USERDATA, (long)window );
+
+  // OpenGL context creation
+  PIXELFORMATDESCRIPTOR pfd = {
+			       sizeof(PIXELFORMATDESCRIPTOR),
+			       1,
+			       PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+			       PFD_TYPE_RGBA,
+			       32,
+			       0, 0, 0, 0, 0, 0,
+			       0,
+			       0,
+			       0,
+			       0, 0, 0, 0,
+			       24,
+			       8,
+			       0,
+			       PFD_MAIN_PLANE,
+			       0,
+			       0, 0, 0
+  };
+
+  HDC dc = GetDC(hwnd);
+  
+  int suggested_format = ChoosePixelFormat(dc, &pfd);
+
+  if(suggested_format == 0) {
+    printf("Failed to choose a pixel format!\n");
+    return 3;
+  }
+
+  SetPixelFormat(dc, suggested_format, &pfd);
+
+  window->device_context = dc;
+
+  HGLRC gl_context = wglCreateContext(dc);
+
+  if(gl_context == NULL) {
+    printf("Failed to create OpenGL context!\n");
+    PrintErrorString();
+    return 4;
+  }
+
+  window->gl_context = gl_context;
+
+  wglMakeCurrent(dc, gl_context);
+  
+  return 0;
+};
+
+void show_window(Window* window) {
+  ShowWindow(window->hwnd, SW_SHOW);
+};
+
+int loop_window(Window* window) {
+  MSG msg;
+  while(PeekMessage(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
+  return 1;
+};
+
+void refresh_window(Window* window) {
+  SwapBuffers(window->device_context);
+};
+
+int free_window(Window * window) {
+  wglMakeCurrent(NULL, NULL);
+  if(wglDeleteContext(window->gl_context) == FALSE) {
+    printf("Failed to destroy OpenGL context!\n");
+    return 3;
+  }
+
+
+  if(DestroyWindow(window->hwnd) == 0) {
+    printf("Failed to destroy window!\n");
+    return 2;
+  }
+
+  if(UnregisterClass(window->class_name, window->h_instance) == 0) {
+    printf("Failed to unregister class!\n");
+    return 1;
+  }
+  return 0;
+};
