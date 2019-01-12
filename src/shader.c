@@ -87,3 +87,9 @@ void uniform_matrix4_shader(Shader* shader, const char* uniform_name, const Matr
   GLint location = glGetUniformLocation(shader->program_id, uniform_name);
   glUniformMatrix4fv(location, 1, GL_TRUE, &matrix.values[0]);
 };
+
+void uniform_vec4_shader(Shader* shader, const char* uniform_name, const float* values) {
+  GLint location = glGetUniformLocation(shader->program_id, uniform_name);
+  glUniform4fv(location, 1, values);
+};
+

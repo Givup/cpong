@@ -23,6 +23,18 @@ float randombif() {
   return (randomf() - 0.5f) * 2.0f;
 };
 
+void print_space_separated_values(char* values_string, const char* prefix) {
+  printf("%s", prefix);
+  while(*values_string != '\0') {
+    if(*values_string == ' ') {
+      printf("\n%s", prefix);
+    } else {
+      printf("%c", *values_string);
+    }
+    values_string++;
+  }
+};
+
 // TODO(Features, Ville): Audio
 
 // TODO(Features, Ville): Collision between ball and paddles
@@ -43,11 +55,19 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  Matrix4 projection;
-  set_ortho_mat4(&projection, 0.0f, (float)window.height, (float)window.width, 0.0f);
+#if 0
+  printf("\nSupported GL Extensions:\n");
+  print_space_separated_values(window.gl_extensions, "\t");
+
+  printf("\nSupported WGL Extensions:\n");
+  print_space_separated_values(window.wgl_extensions, "\t");
+#endif
 
   OpenGLFunctions opengl;
   initialize_opengl_functions(&opengl);
+
+  Matrix4 projection;
+  set_ortho_mat4(&projection, 0.0f, (float)window.height, (float)window.width, 0.0f);
   
   GLubyte* version_str = glGetString(GL_VERSION);
   printf("OpenGL version: %s\n", version_str);
@@ -77,7 +97,7 @@ int main(int argc, char** argv) {
     float delta = get_clock_delta_s(&clock); // Get elapsed time between this and last frame
     if(delta > 1.0f / 30.0f) delta = 1.0f / 30.0f;
     
-    loop_window(&window); // Loop through window messages
+    poll_window(&window); // Loop through window messages
 
     update_game(&game, delta); // Update game
 

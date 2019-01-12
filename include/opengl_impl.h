@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include <gl/glcorearb.h>
+#include <gl/wglext.h>
 
 typedef struct {
   HMODULE gl_library;
@@ -52,6 +53,7 @@ typedef struct {
 // Uniform
 #define glGetUniformLocation(program, name) f_glGetUniformLocation(program, name)
 #define glUniformMatrix4fv(location, count, transpose, value) f_glUniformMatrix4fv(location, count, transpose, value)
+#define glUniform4fv(location, count, value) f_glUniform4fv(location, count, value)
 
 /*
   Function pointers
@@ -99,6 +101,7 @@ extern void(__cdecl *f_glDrawElements)(GLenum, GLsizei, GLenum, const GLvoid*);
 // Uniform
 extern GLint(__cdecl *f_glGetUniformLocation)(GLuint, const GLchar*);
 extern void(__cdecl *f_glUniformMatrix4fv)(GLint, GLsizei, GLboolean, const GLfloat*);
+extern void(__cdecl *f_glUniform4fv)(GLint, GLsizei, const GLfloat*);
 
 // OpenGLFunctions loading and freeing
 

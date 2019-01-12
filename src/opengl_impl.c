@@ -50,6 +50,7 @@ void(__cdecl *f_glDrawElements)(GLenum, GLsizei, GLenum, const GLvoid*);
 // Uniform
 GLint(__cdecl *f_glGetUniformLocation)(GLuint, const GLchar*);
 void(__cdecl *f_glUniformMatrix4fv)(GLint, GLsizei, GLboolean, const GLfloat*);
+void(__cdecl *f_glUniform4fv)(GLint, GLsizei, const GLfloat*);
 
 // Load opengl function dynamically from opengl32.dll
 void* get_gl_func_address(OpenGLFunctions* context, const char* func_name) {
@@ -107,6 +108,7 @@ void initialize_opengl_functions(OpenGLFunctions* context) {
   // Uniform
   LOAD_FUNC(f_glGetUniformLocation, "glGetUniformLocation");
   LOAD_FUNC(f_glUniformMatrix4fv, "glUniformMatrix4fv");
+  LOAD_FUNC(f_glUniform4fv, "glUniform4fv");
 };
 
 // Free loaded library

@@ -2,16 +2,19 @@
 #define _GAME_H_
 
 #include "render.h"
+#include "vector.h"
 
 typedef struct {
   int x, y;
   int width, height;
+  vec4 color;
 } Paddle;
 
 typedef struct {
   float radius;
   float x, y;
   float vx, vy;
+  vec4 color;
 } Ball;
 
 typedef struct {

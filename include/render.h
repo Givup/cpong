@@ -4,6 +4,8 @@
 #include "shader.h"
 #include "opengl_impl.h"
 
+#include "vector.h"
+
 typedef struct {
   float x, y, w, h;
 } RenderRect;
@@ -24,6 +26,13 @@ typedef struct {
 } RenderShape;
 
 typedef struct {
+  vec4 color;
+} RenderMaterial;
+
+extern RenderMaterial make_rmaterial_color(vec4 color);
+extern float* get_material_color_ptr(const RenderMaterial mat);
+
+typedef struct {
   Shader* shader;
 
   RenderShape square;
@@ -33,7 +42,7 @@ typedef struct {
 extern void init_renderer(Renderer* renderer, Shader* shader, int circle_segments);
 extern void free_renderer(Renderer* renderer);
 
-extern void render_rect(Renderer* renderer, const RenderRect rect);
-extern void render_circle(Renderer* renderer, const RenderCircle circle);
+extern void render_rect(Renderer* renderer, const RenderRect rect, const RenderMaterial mat);
+extern void render_circle(Renderer* renderer, const RenderCircle circle, const RenderMaterial mat);
 
 #endif

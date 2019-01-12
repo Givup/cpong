@@ -2,6 +2,8 @@
 #define _SHADER_H_
 
 #include "matrix.h"
+#include "vector.h"
+
 #include <gl/glcorearb.h>
 
 typedef struct {
@@ -15,5 +17,6 @@ extern void use_shader(Shader* shader);
 extern void free_shader(Shader* shader);
 
 extern void uniform_matrix4_shader(Shader* shader, const char* uniform_name, const Matrix4 matrix);
+extern void uniform_vec4_shader(Shader* shader, const char* uniform_name, const float*);
 
 #endif

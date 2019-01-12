@@ -3,6 +3,8 @@
 #include "math.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+
 
 float square_vertices[] = {
 		    -0.5f, -0.5f, 0.0f,
@@ -32,6 +34,16 @@ RenderCircle make_rcircle(float x, float y, float r) {
   c.y = y;
   c.r = r;
   return c;
+};
+
+RenderMaterial make_rmaterial_color(vec4 color) {
+  RenderMaterial mat;
+  mat.color = color;
+  return mat;
+};
+
+float* get_material_color_ptr(const RenderMaterial mat) {
+  return mat.color.v;
 };
 
 void create_render_square(RenderShape* shape) {
@@ -123,7 +135,7 @@ void free_renderer(Renderer* renderer) {
   free(circle_vertices);
 };
 
-void render_rect(Renderer* renderer, const RenderRect rect) {
+void render_rect(Renderer* renderer, const RenderRect rect, const RenderMaterial mat) {
   Matrix4 scale;
   set_scale_mat4(&scale, rect.w, rect.h, 1.0f);
 
@@ -133,6 +145,7 @@ void render_rect(Renderer* renderer, const RenderRect rect) {
   Matrix4 model = multiply_mat4(scale, translation);
 
   uniform_matrix4_shader(renderer->shader, "model", model);
+  uniform_vec4_shader(renderer->shader, "color", get_material_color_ptr(mat));
   
   glBindVertexArray(renderer->square.VAO);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->square.VBO);
@@ -142,7 +155,7 @@ void render_rect(Renderer* renderer, const RenderRect rect) {
   glDrawElements(GL_TRIANGLES, renderer->square.draw_call_count, GL_UNSIGNED_INT, 0);
 };
 
-void render_circle(Renderer* renderer, const RenderCircle circle) {
+void render_circle(Renderer* renderer, const RenderCircle circle, const RenderMaterial mat) {
   Matrix4 scale;
   set_scale_mat4(&scale, circle.r, circle.r, 1.0f);
 
@@ -152,6 +165,7 @@ void render_circle(Renderer* renderer, const RenderCircle circle) {
   Matrix4 model = multiply_mat4(scale, translation);
 
   uniform_matrix4_shader(renderer->shader, "model", model);
+  uniform_vec4_shader(renderer->shader, "color", get_material_color_ptr(mat));
   
   glBindVertexArray(renderer->circle.VAO);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->circle.VBO);
