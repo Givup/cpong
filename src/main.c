@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <glcorearb.h>
+#include <gl/glcorearb.h>
 
 #include "window.h"
 #include "game.h"
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
   glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
 
   Renderer renderer;
-  init_renderer(&renderer, &shader, 4);
+  init_renderer(&renderer, &shader, 100);
 
   Game game;
   create_game(&game, window.width, window.height);

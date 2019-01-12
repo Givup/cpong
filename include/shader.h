@@ -2,7 +2,7 @@
 #define _SHADER_H_
 
 #include "matrix.h"
-#include <glcorearb.h>
+#include <gl/glcorearb.h>
 
 typedef struct {
   GLuint program_id;

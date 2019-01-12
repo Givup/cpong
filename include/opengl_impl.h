@@ -2,7 +2,7 @@
 #define _OPENGL_IMPLEMENTATION_H_
 
 #include <windows.h>
-#include <glcorearb.h>
+#include <gl/glcorearb.h>
 
 typedef struct {
   HMODULE gl_library;
