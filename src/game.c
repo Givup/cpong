@@ -48,17 +48,9 @@ void create_game(Game* game, int arena_w, int arena_h) {
 
   init_paddle(&game->paddles[0], 25, arena_h / 2, 25, 150, player_paddle_c);
   init_paddle(&game->paddles[1], arena_w - 50, arena_h / 2, 25, 150, enemy_paddle_c);
-
-  for(int i = 0;i < NUM_OBSTACLES; i++) {
-    int side_l = randomi_range(15, 25);
-    init_paddle(&game->obstacles[i], randomi_range(50, arena_w - 100), randomi_range(50, arena_h - 100), side_l, side_l, obstacle_c);
-  }
-
-  game->paddles[0].y -= 100;
-  game->paddles[1].y += 100;
 };
 
-int ball_collides_with_paddle(const Ball ball, const Paddle paddle, vec2* hit_normal) {
+int ball_collides_with_paddle(const Ball ball, const Paddle paddle, vec2* hit_normal, float* overlap) {
   // Implementation
   // Find the closest point from ball to paddle, and check the distance to that point
   // and if the distance is less than ball radius, there is collision
@@ -85,6 +77,7 @@ int ball_collides_with_paddle(const Ball ball, const Paddle paddle, vec2* hit_no
     vec2 norm = make_vec2(d_x, d_y);
     norm = normalize_vec2(norm);
     set_vec2(hit_normal, norm.v[0], norm.v[1]);
+    *overlap = ball.radius - d;
     return 1;
   }
   return 0;
@@ -119,18 +112,16 @@ void update_game(Game* game, float delta_time) {
   // Check for collision
   {
     vec2 normal;
-    if(ball_collides_with_paddle(game->ball, game->paddles[0], &normal) || ball_collides_with_paddle(game->ball, game->paddles[1], &normal)) {
+    float overlap;
+    if(ball_collides_with_paddle(game->ball, game->paddles[0], &normal, &overlap) || ball_collides_with_paddle(game->ball, game->paddles[1], &normal, &overlap)) {
       vec2 reflected = reflect_vec2(game->ball.vel, normal);
       set_vec2(&game->ball.vel, reflected.v[0], reflected.v[1]);
-    }
 
-    for(int i = 0;i < NUM_OBSTACLES;i++) {
-      if(ball_collides_with_paddle(game->ball, game->obstacles[i], &normal)){
- 	vec2 reflected = reflect_vec2(game->ball.vel, normal);
-	set_vec2(&game->ball.vel, reflected.v[0], reflected.v[1]);
-      }
+      vec2 vel_normalized = normalize_vec2(game->ball.vel);
+      vel_normalized = scale_vec2(vel_normalized, overlap);
+      game->ball.x += vel_normalized.v[0]; 
+      game->ball.y += vel_normalized.v[1];
     }
-
   }
 
 };
@@ -148,15 +139,7 @@ void render_game(Game* game, Renderer* renderer) {
 
   render_paddle(game->paddles[0], renderer);
   render_paddle(game->paddles[1], renderer);
-
-  
-  for(int i = 0;i < NUM_OBSTACLES; i++) {
-    render_paddle(game->obstacles[i], renderer);
-  }
-
 };
 
 void free_game(Game* game) {
-  
 };
-

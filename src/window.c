@@ -31,7 +31,13 @@ LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
     case WM_DESTROY:
       window->quit = 1;
       return 0;
+      
+    case WM_KEYDOWN:
+      break;
+    case WM_KEYUP:
+      break;
     }
+
   }
   return DefWindowProc(hwnd, msg, wParam, lParam);
 };

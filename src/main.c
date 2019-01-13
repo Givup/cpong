@@ -45,8 +45,6 @@ void print_space_separated_values(char* values_string, const char* prefix) {
 
 // TODO(Features, Ville): Audio
 
-// TODO(Features, Ville): Collision between ball and paddles
-
 // TODO(Features, Ville): Input
 
 // TODO(Features, Ville): Support for textures
