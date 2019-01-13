@@ -151,7 +151,6 @@ void render_rect(Renderer* renderer, const RenderRect rect, const RenderMaterial
   glBindBuffer(GL_ARRAY_BUFFER, renderer->square.VBO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer->square.EBO);
 
-
   glDrawElements(GL_TRIANGLES, renderer->square.draw_call_count, GL_UNSIGNED_INT, 0);
 };
 

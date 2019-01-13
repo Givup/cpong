@@ -1,6 +1,8 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+#define NUM_OBSTACLES 32
+
 #include "render.h"
 #include "vector.h"
 
@@ -11,15 +13,18 @@ typedef struct {
 } Paddle;
 
 typedef struct {
-  float radius;
-  float x, y;
-  float vx, vy;
-  vec4 color;
+  float radius;  // Radius of ball
+  float x, y;    // Position
+  vec2 vel;      // Velocity
+  vec4 color;    // Color
 } Ball;
 
 typedef struct {
   int width, height;
   Paddle paddles[2];
+
+  Paddle obstacles[NUM_OBSTACLES];
+
   Ball ball;
 } Game;
 

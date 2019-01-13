@@ -23,6 +23,14 @@ float randombif() {
   return (randomf() - 0.5f) * 2.0f;
 };
 
+int randomi(int max) {
+  return (int)(randomf() * (float)max);
+};
+
+int randomi_range(int min, int max) {
+  return min + (int)(randomf() * (float)(max - min));
+};
+
 void print_space_separated_values(char* values_string, const char* prefix) {
   printf("%s", prefix);
   while(*values_string != '\0') {
@@ -78,7 +86,7 @@ int main(int argc, char** argv) {
 
   uniform_matrix4_shader(&shader, "proj", projection);
 
-  glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
   Renderer renderer;
   init_renderer(&renderer, &shader, 100);
