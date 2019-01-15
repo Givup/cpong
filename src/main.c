@@ -52,14 +52,17 @@ void print_space_separated_values(char* values_string, const char* prefix) {
 // TODO(Features, Ville): Some kind of particle system
 
 int main(int argc, char** argv) {
-
   srand(time(NULL));
+
+  InputHandler input_handler;
 
   Window window;
   if(create_window(&window, 1280, 720, "Hello, DOD!")){
     printf("Window creation failed!\n");
     return -1;
   }
+
+  attach_input_handler(&window, &input_handler);
 
 #if 0
   printf("\nSupported GL Extensions:\n");
@@ -98,14 +101,17 @@ int main(int argc, char** argv) {
   start_clock(&clock);
 
   while(window.quit == 0) {
-
     // Update
     float delta = get_clock_delta_s(&clock); // Get elapsed time between this and last frame
     if(delta > 1.0f / 30.0f) delta = 1.0f / 30.0f;
     
     poll_window(&window); // Loop through window messages
 
-    update_game(&game, delta); // Update game
+    if(is_key_mod_down(&input_handler, KEY_Q, KEY_MOD_CONTROL)) {
+      break;
+    }
+
+    update_game(&game, &input_handler, delta); // Update game
 
     // Rendering
 

@@ -1,7 +1,10 @@
 #include <windows.h>
 #include <assert.h>
+#include "input_handler.h"
 
 typedef struct {
+  InputHandler* input_handler;
+
   int width;
   int height;
   int quit;
@@ -18,6 +21,8 @@ extern LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 
 extern int create_window(Window* window, int width, int height, char* title);
 extern int free_window(Window * window);
+
+extern void attach_input_handler(Window* window, InputHandler* input_handler);
 
 extern void show_window(Window* window);
 extern int poll_window(Window* window);

@@ -33,11 +33,28 @@ LRESULT CALLBACK window_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
       return 0;
       
     case WM_KEYDOWN:
-      break;
+      if(window->input_handler != NULL) {
+	win32_input_down(window->input_handler, wParam, lParam);
+      }
+      return 0;
     case WM_KEYUP:
-      break;
-    }
+      if(window->input_handler != NULL) {
+	win32_input_up(window->input_handler, wParam, lParam);
+      }
+      return 0;
 
+      // So pressing alt doesn't hang the process
+    case WM_SYSKEYDOWN:
+      if(window->input_handler != NULL) {
+	win32_input_down(window->input_handler, wParam, lParam);
+      }
+      return 0;
+    case WM_SYSKEYUP:
+      if(window->input_handler != NULL) {
+	win32_input_up(window->input_handler, wParam, lParam);
+      }
+      return 0;
+    }
   }
   return DefWindowProc(hwnd, msg, wParam, lParam);
 };
@@ -46,6 +63,7 @@ int create_window(Window* window, int width, int height, char* title) {
 
   HINSTANCE h_instance = GetModuleHandle(NULL);
 
+  window->input_handler = NULL;
   window->width = width;
   window->height = height;
   window->quit = 0;
@@ -241,6 +259,10 @@ int free_window(Window * window) {
     return 1;
   }
   return 0;
+};
+
+void attach_input_handler(Window* window, InputHandler * input_handler) {
+  window->input_handler = input_handler;
 };
 
 void show_window(Window* window) {

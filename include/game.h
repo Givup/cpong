@@ -3,10 +3,10 @@
 
 #include "render.h"
 #include "vector.h"
+#include "input_handler.h"
 
 typedef struct {
-  int x, y;
-  int width, height;
+  vec4 pos_size;
   vec4 color;
 } Paddle;
 
@@ -21,10 +21,12 @@ typedef struct {
   int width, height;
   Paddle paddles[2];
   Ball ball;
+
+  int scores[2];
 } Game;
 
 extern void create_game(Game* game, int arena_w, int arena_h);
-extern void update_game(Game* game, float delta_time);
+extern void update_game(Game* game, InputHandler* input_handler, float delta_time);
 extern void render_game(Game* game, Renderer* renderer);
 extern void free_game(Game* game);
 
