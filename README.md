@@ -9,7 +9,7 @@ Pong game written in pure C, and without using external libraries, excluding Ope
  - OpenGL function loading   [x]
  - Basic rendering           [x]
  - Basic collision detection [x]
+ - Input                     [x]
  - Better collision system   [ ]
- - Input                     [ ]
  - Audio                     [ ]
 

@@ -45,11 +45,7 @@ void print_space_separated_values(char* values_string, const char* prefix) {
 
 // TODO(Features, Ville): Audio
 
-// TODO(Features, Ville): Input
-
 // TODO(Features, Ville): Support for textures
-
-// TODO(Features, Ville): Some kind of particle system
 
 int main(int argc, char** argv) {
   srand(time(NULL));
