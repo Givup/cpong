@@ -6,22 +6,21 @@
 #include "input_handler.h"
 
 typedef struct {
-  vec4 pos_size;
-  vec4 color;
+  vec4 pos_size;           // X, Y, W, H
+  RenderMaterial material; // Material
 } Paddle;
 
 typedef struct {
-  float radius;  // Radius of ball
-  float x, y;    // Position
-  vec2 vel;      // Velocity
-  vec4 color;    // Color
+  float radius;            // Radius of ball
+  float x, y;              // Position
+  vec2 vel;                // Velocity
+  RenderMaterial material; // Material
 } Ball;
 
 typedef struct {
   int width, height;
   Paddle paddles[2];
   Ball ball;
-
   int scores[2];
 } Game;
 

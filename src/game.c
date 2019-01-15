@@ -13,7 +13,7 @@ extern float randombif();
 
 void init_paddle(Paddle* paddle, int x, int y, int w, int h, vec4 color) {
   paddle->pos_size = make_vec4(x, y - h / 2, w, h);
-  paddle->color = color;
+  paddle->material = make_rmaterial_color(color);
 };
 
 /*
@@ -25,7 +25,7 @@ void init_ball(Ball* ball, int x, int y, float radius, vec4 color) {
   ball->y = y;
   ball->radius = radius;
   ball->vel = make_vec2(-300.0f, randombif() * 300.0f);
-  ball->color = color;
+  ball->material = make_rmaterial_color(color);
 };
 
 /*
@@ -39,7 +39,6 @@ void create_game(Game* game, int arena_w, int arena_h) {
   vec4 ball_c = make_vec4(0.0f, 0.7f, 0.0f, 1.0f);
   vec4 player_paddle_c = make_vec4(0.0f, 0.0f, 0.7f, 1.0f);
   vec4 enemy_paddle_c = make_vec4(0.7f, 0.0f, 0.0f, 1.0f);
-  vec4 obstacle_c = make_vec4(0.7f, 0.7f, 0.3f, 1.0f);
   
   init_ball(&game->ball, arena_w / 2, arena_h / 2, 25.0f, ball_c);
 
@@ -126,12 +125,12 @@ void update_game(Game* game, InputHandler* input, float delta_time) {
 
     if(ball->x + ball->radius < 0.0f) {
       game->scores[1] += 1;
-      init_ball(ball, game->width / 2, game->height / 2, ball->radius, game->paddles[1].color);
+      init_ball(ball, game->width / 2, game->height / 2, ball->radius, game->paddles[1].material.color);
       ball->vel = mul_vec2(ball->vel, make_vec2(-1.0f, 1.0f));
     }
     else if(ball->x - ball->radius > game->width) {
       game->scores[0] += 1;
-      init_ball(ball, game->width / 2, game->height / 2, ball->radius, game->paddles[0].color);
+      init_ball(ball, game->width / 2, game->height / 2, ball->radius, game->paddles[0].material.color);
     }
 
     if(ball->y - ball->radius < 0.0f) {
@@ -163,7 +162,7 @@ void update_game(Game* game, InputHandler* input, float delta_time) {
 
 };
 
-void render_paddle(const Paddle paddle, Renderer* renderer) {
+void render_paddle(Paddle paddle, Renderer* renderer) {
 
   vec4 p = paddle.pos_size;
 
@@ -172,11 +171,11 @@ void render_paddle(const Paddle paddle, Renderer* renderer) {
   float w = get_z_vec4(p);
   float h = get_w_vec4(p);
 
-  render_rect(renderer, make_rrect(x + w / 2.0f, y + h / 2.0f, w, h), make_rmaterial_color(paddle.color));
+  render_rect(renderer, make_rrect(x + w / 2.0f, y + h / 2.0f, w, h), &paddle.material);
 };
 
-void render_ball(const Ball ball, Renderer* renderer) {
-  render_circle(renderer, make_rcircle(ball.x, ball.y, ball.radius), make_rmaterial_color(ball.color));
+void render_ball(Ball ball, Renderer* renderer) {
+  render_circle(renderer, make_rcircle(ball.x, ball.y, ball.radius), &ball.material);
 };
 
 void render_game(Game* game, Renderer* renderer) {

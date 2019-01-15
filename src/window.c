@@ -170,8 +170,8 @@ int create_window(Window* window, int width, int height, char* title) {
   window->gl_extensions = strcpy(window->gl_extensions, extensions);
 
 
-  char* (*f_wglGetExtensionsStringARB)(HDC);
-  f_wglGetExtensionsStringARB = wglGetProcAddress("wglGetExtensionsStringARB");
+  //char* (*f_wglGetExtensionsStringARB)(HDC);
+  PROC f_wglGetExtensionsStringARB = wglGetProcAddress("wglGetExtensionsStringARB");
   assert(f_wglGetExtensionsStringARB != 0);
 
   if(f_wglGetExtensionsStringARB == NULL) {
@@ -179,7 +179,7 @@ int create_window(Window* window, int width, int height, char* title) {
     return 5;
   }
 
-  char* wgl_extensions = f_wglGetExtensionsStringARB(dc);
+  char* wgl_extensions = (char*)f_wglGetExtensionsStringARB(dc);
   
   if(wgl_extensions == 0) {
     printf("Failed to get WGL extensions string!\n");
@@ -187,8 +187,8 @@ int create_window(Window* window, int width, int height, char* title) {
   }
   window->wgl_extensions = wgl_extensions;
 
-  BOOL (*f_wglChoosePixelFormatARB)(HDC, const int*, const FLOAT*, UINT, int*, UINT*);
-  f_wglChoosePixelFormatARB = wglGetProcAddress("wglChoosePixelFormatARB");
+  //BOOL (*f_wglChoosePixelFormatARB)(HDC, const int*, const FLOAT*, UINT, int*, UINT*);
+  PROC f_wglChoosePixelFormatARB = wglGetProcAddress("wglChoosePixelFormatARB");
   assert(f_wglChoosePixelFormatARB != 0);
 
   const int attribList[] = {
@@ -212,8 +212,8 @@ int create_window(Window* window, int width, int height, char* title) {
 
   SetPixelFormat(dc, wglPixelFormat, &pfd);
 
-  HGLRC (*f_wglCreateContextAttribsARB)(HDC, HGLRC, const int*);
-  f_wglCreateContextAttribsARB = wglGetProcAddress("wglCreateContextAttribsARB");
+  //HGLRC (*f_wglCreateContextAttribsARB)(HDC, HGLRC, const int*);
+  PROC f_wglCreateContextAttribsARB = wglGetProcAddress("wglCreateContextAttribsARB");
   assert(f_wglCreateContextAttribsARB != 0);
 
   const int contextAttribs[] = {
@@ -223,7 +223,7 @@ int create_window(Window* window, int width, int height, char* title) {
     0 // End
   };
 
-  HGLRC real_context = f_wglCreateContextAttribsARB(dc, NULL, contextAttribs);
+  HGLRC real_context = (HGLRC)f_wglCreateContextAttribsARB(dc, NULL, contextAttribs);
 
   if(real_context == NULL) {
     printf("Failed to create real GL context!\n");

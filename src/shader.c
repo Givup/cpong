@@ -6,21 +6,26 @@
 
 char* load_file(const char* filename);
 
-char* load_file_contents(const char* filename) {
-  FILE* f = fopen(filename, "r");
+char* load_file_contents(const char* filename, int* length) {
+  FILE* f = fopen(filename, "rb");
 
   if(f == NULL) {
+    printf("Failed to open file: %s\n", filename);
     return NULL;
   }
-
-  char* contents;
 
   long int file_size = 0;
   fseek(f, 0, SEEK_END);
   file_size = ftell(f);
 
-  contents = (char*)calloc(file_size + 1, 1);
-  *(contents + file_size) = '\0';
+  char* contents = (char*)(malloc(file_size));
+
+  if(contents == NULL) {
+      printf("Failed to allocate memory for file!\n");
+	  return NULL;
+  }
+  
+  *(contents + file_size) = 0;
 
   fseek(f, 0, SEEK_SET);
 
@@ -28,7 +33,9 @@ char* load_file_contents(const char* filename) {
 
   fclose(f);
 
-  return contents;
+  *length = file_size;
+
+  return (void*)contents;
 };
 
 void check_compile(GLuint shader) {
@@ -37,42 +44,43 @@ void check_compile(GLuint shader) {
 
   // Check if compilation failed
   if(success == GL_FALSE) {
-    char logInfo[512];
-    glGetShaderInfoLog(shader, 512, NULL, logInfo);
+    GLint logLength;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+    printf("The log length is %d\n", logLength);
+    GLchar* logInfo = (GLchar*)malloc(logLength);
+    glGetShaderInfoLog(shader, logLength, NULL, logInfo);
     printf("Shader compilation error: %s\n", logInfo);
+    free(logInfo);
   }
 };
 
 void create_shader(Shader* shader, const char* vert_file, const char* frag_file) {
+  GLuint pid = glCreateProgram();
   GLuint vertex_id = glCreateShader(GL_VERTEX_SHADER);
   GLuint fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
 
-  char* vertex_source = load_file_contents(vert_file);
-  char* fragment_source = load_file_contents(frag_file);
-
-  glShaderSource(vertex_id, 1, (const GLchar**)&vertex_source, NULL);
-  glShaderSource(fragment_id, 1, (const GLchar**)&fragment_source, NULL);
-
-  glCompileShader(vertex_id);
+  int v_length;
+  char* vertex_source = load_file_contents(vert_file, &v_length);
+  f_glShaderSource((GLuint)vertex_id, (GLsizei)1, (const GLchar**)&vertex_source, &v_length);
+  glCompileShader((GLuint)vertex_id);
   check_compile(vertex_id);
-  glCompileShader(fragment_id);
-  check_compile(fragment_id);
 
-  GLuint pid = glCreateProgram();
+  int f_length;
+  char* fragment_source = load_file_contents(frag_file, &f_length);
+  f_glShaderSource((GLuint)fragment_id, (GLsizei)1, (const GLchar**)&fragment_source, &f_length);
+  glCompileShader((GLuint)fragment_id);
+  check_compile(fragment_id);
 
   glAttachShader(pid, vertex_id);
   glAttachShader(pid, fragment_id);
   glLinkProgram(pid);
-  
-  //glDeleteShader(vertex_id);
-  //glDeleteShader(fragment_id);
-
-  free(vertex_source);
-  free(fragment_source);
 
   shader->program_id = pid;
   shader->vertex_id = vertex_id;
   shader->fragment_id = fragment_id;
+
+  free(vertex_source);
+  free(fragment_source);
 };
 
 void use_shader(Shader* shader) {

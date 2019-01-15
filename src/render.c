@@ -42,8 +42,8 @@ RenderMaterial make_rmaterial_color(vec4 color) {
   return mat;
 };
 
-float* get_material_color_ptr(const RenderMaterial mat) {
-  return mat.color.v;
+float* get_material_color_ptr(RenderMaterial* mat) {
+  return mat->color.v;
 };
 
 void create_render_square(RenderShape* shape) {
@@ -135,7 +135,7 @@ void free_renderer(Renderer* renderer) {
   free(circle_vertices);
 };
 
-void render_rect(Renderer* renderer, const RenderRect rect, const RenderMaterial mat) {
+void render_rect(Renderer* renderer, const RenderRect rect, RenderMaterial* mat) {
   Matrix4 scale;
   set_scale_mat4(&scale, rect.w, rect.h, 1.0f);
 
@@ -154,7 +154,7 @@ void render_rect(Renderer* renderer, const RenderRect rect, const RenderMaterial
   glDrawElements(GL_TRIANGLES, renderer->square.draw_call_count, GL_UNSIGNED_INT, 0);
 };
 
-void render_circle(Renderer* renderer, const RenderCircle circle, const RenderMaterial mat) {
+void render_circle(Renderer* renderer, const RenderCircle circle, RenderMaterial* mat) {
   Matrix4 scale;
   set_scale_mat4(&scale, circle.r, circle.r, 1.0f);
 
